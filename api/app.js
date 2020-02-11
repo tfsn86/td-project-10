@@ -2,6 +2,7 @@
 
 // load modules
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -10,6 +11,8 @@ const { sequelize } = require('./models');
 
 // create the Express app
 const app = express();
+
+app.use(cors());
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =
