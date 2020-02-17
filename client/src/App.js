@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-import Courses from './components/Courses';
 import './styles/global.css';
+
+import Header from './components/Header';
+import Courses from './components/Courses';
 
 class App extends Component {
 	render() {
-		return <Courses />;
+		return (
+			<div>
+				<Header />
+				<Courses />
+			</div>
+		);
 	}
 }
 
