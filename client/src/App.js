@@ -3,6 +3,7 @@ import './styles/global.css';
 
 import Header from './components/Header';
 import Courses from './components/Courses';
+// import CourseDetail from './components/CourseDetail';
 
 class App extends Component {
 	render() {
