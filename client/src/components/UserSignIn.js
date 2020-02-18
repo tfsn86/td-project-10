@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class UserSignIn extends React.Component {
+class UserSignIn extends Component {
 	render() {
 		return (
 			<div className="bounds">

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class CreateCourse extends React.Component {
+class CreateCourse extends Component {
 	render() {
 		return (
 			<div className="bounds course--detail">
