@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
 class UserSignUp extends Component {
 	render() {
@@ -73,8 +74,8 @@ class UserSignUp extends Component {
 					</div>
 					<p>&nbsp;</p>
 					<p>
-						Already have a user account? <a href="sign-in.html">Click here</a>{' '}
-						to sign in!
+						Already have a user account?{' '}
+						<NavLink to="/signin">Click here</NavLink> to sign in!
 					</p>
 				</div>
 			</div>
