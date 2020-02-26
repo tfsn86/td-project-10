@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
 class CourseDetail extends Component {
 	render() {
@@ -8,16 +9,16 @@ class CourseDetail extends Component {
 					<div className="bounds">
 						<div className="grid-100">
 							<span>
-								<a className="button" href="update-course.html">
+								<NavLink to="/courses/1/update" className="button">
 									Update Course
-								</a>
-								<a className="button" href="#">
+								</NavLink>
+								<NavLink to="/" className="button">
 									Delete Course
-								</a>
+								</NavLink>
 							</span>
-							<a className="button button-secondary" href="index.html">
+							<NavLink to="/" className="button button-secondary">
 								Return to List
-							</a>
+							</NavLink>
 						</div>
 					</div>
 				</div>
