@@ -2,13 +2,21 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 
 class Courses extends Component {
-	state = { courses: [] };
+	state = {
+		courses: []
+	};
 
 	componentDidMount() {
-		fetch('http://localhost:5000/api/courses')
-			.then(res => res.json())
-			.then(data => this.setState({ courses: data }))
-			.catch(console.log);
+		const { context } = this.props;
+
+		context.data
+			.getCourses()
+			.then(courses => {
+				this.setState({ courses });
+			})
+			.catch(err => {
+				this.props.history.push('/error');
+			});
 	}
 
 	render() {
