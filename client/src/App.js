@@ -12,8 +12,6 @@ import UserSignOut from './components/UserSignOut';
 import UpdateCourse from './components/UpdateCourse';
 import CreateCourse from './components/CreateCourse.js';
 import CourseDetail from './components/CourseDetail';
-// import Forbidden from './components/Forbidden';
-// import Error from './components/Error';
 
 import withContext from './Context';
 import PrivateRoute from './PrivateRoute';
@@ -37,15 +35,18 @@ class App extends Component {
 
 					<Switch>
 						<Route exact path="/" component={CoursesWithContext} />
-						<Route path="/courses/create" component={CreateCourseWithContext} />
-						<Route path="/courses/:id" component={CourseDetailWithContext} />
-						<Route
+						<PrivateRoute
+							path="/courses/create"
+							component={CreateCourseWithContext}
+						/>
+						<PrivateRoute
 							path="/courses/:id/update"
 							component={UpdateCourseWithContext}
 						/>
+						<Route path="/courses/:id" component={CourseDetailWithContext} />
 						<Route path="/signin" component={UserSignInWithContext} />
 						<Route path="/signup" component={UserSignUpWithContext} />
-						<Route path="/signout" component={UserSignOut} />
+						<Route path="/signout" component={SignOutWithContext} />
 						<Route component={NotFound} />
 					</Switch>
 				</div>

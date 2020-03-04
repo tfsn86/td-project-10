@@ -1,86 +1,149 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import Form from './Form';
 
-class UserSignUp extends Component {
+export default class UserSignUp extends Component {
+	state = {
+		firstName: '',
+		lastName: '',
+		emailAddress: '',
+		password: '',
+		confirmPassword: '',
+		errors: []
+	};
+
 	render() {
+		const {
+			firstName,
+			lastName,
+			emailAddress,
+			password,
+			confirmPassword,
+			errors
+		} = this.state;
+
 		return (
 			<div className="bounds">
 				<div className="grid-33 centered signin">
 					<h1>Sign Up</h1>
-					<div>
-						<form>
-							<div>
+					<Form
+						cancel={this.cancel}
+						errors={errors}
+						submit={this.submit}
+						submitButtonText="Sign Up"
+						elements={() => (
+							<React.Fragment>
 								<input
+									autoFocus
 									id="firstName"
 									name="firstName"
 									type="text"
-									className
+									className=""
+									onChange={this.change}
 									placeholder="First Name"
-									defaultValue
+									value={firstName}
 								/>
-							</div>
-							<div>
 								<input
 									id="lastName"
 									name="lastName"
 									type="text"
-									className
+									className=""
+									onChange={this.change}
 									placeholder="Last Name"
-									defaultValue
+									value={lastName}
 								/>
-							</div>
-							<div>
 								<input
 									id="emailAddress"
 									name="emailAddress"
 									type="text"
-									className
+									className=""
+									onChange={this.change}
 									placeholder="Email Address"
-									defaultValue
+									value={emailAddress}
 								/>
-							</div>
-							<div>
 								<input
 									id="password"
 									name="password"
 									type="password"
-									className
+									className=""
+									onChange={this.change}
 									placeholder="Password"
-									defaultValue
+									value={password}
 								/>
-							</div>
-							<div>
 								<input
 									id="confirmPassword"
 									name="confirmPassword"
 									type="password"
-									className
+									className=""
+									onChange={this.change}
 									placeholder="Confirm Password"
-									defaultValue
+									value={confirmPassword}
 								/>
-							</div>
-							<div className="grid-100 pad-bottom">
-								<button className="button" type="submit">
-									Sign Up
-								</button>
-								<button
-									className="button button-secondary"
-									onclick="event.preventDefault(); location.href='index.html';"
-								>
-									Cancel
-								</button>
-							</div>
-						</form>
-					</div>
-					<p>&nbsp;</p>
+							</React.Fragment>
+						)}
+					/>
 					<p>
-						Already have a user account?{' '}
-						<NavLink to="/signin">Click here</NavLink> to sign in!
+						Already have an account? <NavLink to="/signin">Click here</NavLink>{' '}
+						to sign in!
 					</p>
 				</div>
 			</div>
 		);
 	}
-}
 
-export default UserSignUp;
+	change = event => {
+		const name = event.target.name;
+		const value = event.target.value;
+
+		this.setState(() => {
+			return {
+				[name]: value
+			};
+		});
+	};
+
+	submit = () => {
+		const { context } = this.props;
+
+		const {
+			firstName,
+			lastName,
+			emailAddress,
+			password,
+			confirmPassword
+		} = this.state;
+
+		const user = {
+			firstName,
+			lastName,
+			emailAddress,
+			password,
+			confirmPassword
+		};
+
+		const passwordError = { message: 'Passwords must match' };
+
+		if (password === confirmPassword) {
+			context.data
+				.createUser(user)
+				.then(errors => {
+					if (errors.length) {
+						this.setState({ errors });
+					} else {
+						context.actions.signIn(emailAddress, password).then(() => {
+							this.props.history.push('/');
+						});
+					}
+				})
+				.catch(err => {
+					this.props.history.push('/error');
+				});
+		} else {
+			this.setState({ errors: [passwordError] });
+		}
+	};
+
+	cancel = () => {
+		this.props.history.push('/');
+	};
+}

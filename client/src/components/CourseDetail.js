@@ -24,12 +24,14 @@ class CourseDetail extends Component {
 	}
 
 	render() {
-		const { course } = this.state;
 		const { context } = this.props;
+		const { course } = this.state;
+
 		const instructor = this.state.course.User;
 		const authUser = context.authenticatedUser;
-		const materials = `${course.materialsNeeded}`;
+
 		const description = `${course.description}`;
+		const materials = `${course.materialsNeeded}`;
 
 		return (
 			<div className="bounds">
@@ -37,22 +39,31 @@ class CourseDetail extends Component {
 					<div>
 						<div className="actions--bar">
 							<div className="bounds">
-								<div className="grid-100">
-									<span>
-										<NavLink
-											to={`/courses/${course.id}/update`}
-											className="button"
-										>
-											Update Course
+								{/* Conditionally render "delete" and "update" buttons */}
+								{authUser === null || authUser.id !== instructor.id ? (
+									<div className="grid-100">
+										<NavLink to="/" className="button button-secondary">
+											Return to List
 										</NavLink>
-										<NavLink to="/" className="button" onClick={this.delete}>
-											Delete Course
+									</div>
+								) : (
+									<div className="grid-100">
+										<span>
+											<NavLink
+												to={`/courses/${course.id}/update`}
+												className="button"
+											>
+												Update Course
+											</NavLink>
+											<NavLink to="/" className="button" onClick={this.delete}>
+												Delete Course
+											</NavLink>
+										</span>
+										<NavLink to="/" className="button button-secondary">
+											Return to List
 										</NavLink>
-									</span>
-									<NavLink to="/" className="button button-secondary">
-										Return to List
-									</NavLink>
-								</div>
+									</div>
+								)}
 							</div>
 						</div>
 
@@ -90,6 +101,30 @@ class CourseDetail extends Component {
 			</div>
 		);
 	}
+
+	// Function for the delete button
+	delete = () => {
+		const { context } = this.props;
+		const { id } = this.state;
+
+		const user = context.authenticatedUser;
+
+		const pass = context.authenticatedUser.password;
+
+		context.data
+			.deleteCourse(user.emailAddress, pass, id)
+			.then(errors => {
+				if (errors.length) {
+					this.setState({ errors });
+				} else {
+					window.location.href = '/';
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				this.props.history.push('/error');
+			});
+	};
 }
 
 export default CourseDetail;
