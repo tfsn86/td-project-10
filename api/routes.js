@@ -60,45 +60,42 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
 
 /**User routes */
 // Route that returns the current authenticated user.
-router.get('/users', authenticateUser, (req, res) => {
-	const user = req.currentUser;
+router.get(
+	'/users',
+	authenticateUser,
+	asyncHandler(async (req, res) => {
+		const authUser = req.currentUser;
 
-	res
-		.status(200)
-		.json({
-			firstName: user.firstName,
-			lastName: user.lastName,
-			username: user.emailAddress
-		})
-		.end();
-});
+		const user = await User.findByPk(authUser.id, {
+			attributes: {
+				exclude: ['password', 'createdAt', 'updatedAt']
+			}
+		});
+
+		if (user) {
+			res.status(200).json(user);
+		} else {
+			res.status(400).json({ message: 'User not found' });
+		}
+	})
+);
 
 // Route that creates a user
 router.post(
 	'/users',
-	[
-		check('emailAddress')
-			.isEmail()
-			.withMessage('Please provide a valid email address')
-	],
 	asyncHandler(async (req, res) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			const errorMessages = errors.array().map(error => error.msg);
-			res.status(400).json({ errors: errorMessages });
-		} else {
-			const user = req.body;
+		const user = req.body;
 
-			if (user.password) {
-				user.password = bcryptjs.hashSync(user.password);
-			}
-
-			await User.create(req.body);
-			res
-				.status(201)
-				.location('/')
-				.end();
+		if (user.password) {
+			user.password = bcryptjs.hashSync(user.password);
 		}
+
+		await User.create(req.body);
+
+		res
+			.status(201)
+			.location('/')
+			.end();
 	})
 );
 
@@ -111,12 +108,16 @@ router.get(
 			attributes: {
 				exclude: ['createdAt', 'updatedAt']
 			},
-			include: {
-				model: User,
-				attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
-			}
+			include: [
+				{
+					model: User,
+					attributes: {
+						exclude: ['password', 'createdAt', 'updatedAt']
+					}
+				}
+			]
 		});
-		res.status(200).json(courses);
+		res.json(courses);
 	})
 );
 
@@ -128,11 +129,16 @@ router.get(
 			attributes: {
 				exclude: ['createdAt', 'updatedAt']
 			},
-			include: {
-				model: User,
-				attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
-			}
+			include: [
+				{
+					model: User,
+					attributes: {
+						exclude: ['password', 'createdAt', 'updatedAt']
+					}
+				}
+			]
 		});
+
 		res.status(200).json(course);
 	})
 );
@@ -153,26 +159,24 @@ router.post(
 // Updates a course and returns no content
 router.put(
 	'/courses/:id',
-	[
-		check('title').exists({
-			checkFalsy: true,
-			checkNull: true
-		}),
-		check('description').exists({
-			checkFalsy: true,
-			checkNull: true
-		}),
-		check('userId').exists({
-			checkFalsy: true,
-			checkNull: true
-		})
-	],
 	authenticateUser,
-	asyncHandler(async (req, res) => {
+	[
+		check('title')
+			.exists()
+			.withMessage('Please provide a value for "Title"'),
+		check('description')
+			.exists()
+			.withMessage('Please provide a value for "Description"'),
+		check('userId')
+			.exists()
+			.withMessage('Please provide a value for "User Id"')
+	],
+	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
 			const errorMessages = errors.array().map(error => error.msg);
+
 			res.status(400).json({ errors: errorMessages });
 		} else {
 			const authUser = req.currentUser;
@@ -194,9 +198,11 @@ router.put(
 router.delete(
 	'/courses/:id',
 	authenticateUser,
-	asyncHandler(async (req, res) => {
+	asyncHandler(async (req, res, next) => {
 		const authUser = req.currentUser;
+
 		const course = await Course.findByPk(req.params.id);
+
 		if (course) {
 			if (authUser.id === course.userId) {
 				await course.destroy();
@@ -204,7 +210,7 @@ router.delete(
 			} else {
 				res
 					.status(403)
-					.json({ message: 'You can only delete your own courses' });
+					.json({ message: 'You may only make changes to your own courses' });
 			}
 		} else {
 			next();

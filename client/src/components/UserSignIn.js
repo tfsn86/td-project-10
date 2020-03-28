@@ -90,7 +90,7 @@ export default class UserSignIn extends Component {
 					console.log(this.state.errors);
 				} else {
 					this.props.history.push(from);
-					console.log(`SUCCESS, ${emailAddress} is now signed in`);
+					console.log(`${emailAddress} is now signed in`);
 				}
 			})
 			.catch(err => {
