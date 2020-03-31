@@ -69,7 +69,7 @@ export default class UserSignIn extends Component {
 
 		//
 		const { from } = this.props.location.state || {
-				from: { pathname: '/courses/create' }
+				from: { pathname: '/' }
 			} || { from: { pathname: '/courses/:id/update' } };
 
 		const { emailAddress, password } = this.state;
