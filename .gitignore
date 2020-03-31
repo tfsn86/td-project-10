@@ -75,3 +75,4 @@ typings/
 # FuseBox cache
 .fusebox/
 api/fsjstd-restapi.db
+api/fsjstd-restapi.db
