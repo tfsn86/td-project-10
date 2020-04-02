@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import './styles/global.css';
-
+// Import app components
 import Header from './components/Header';
 import Courses from './components/Courses';
 import NotFound from './components/NotFound';

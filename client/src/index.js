@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+// Import CSS
 import './styles/global.css';
 import App from './App';
+
+//import Provider to wrap app in
 import { Provider } from './Context';
 import * as serviceWorker from './serviceWorker';
 
